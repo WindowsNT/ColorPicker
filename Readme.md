@@ -12,8 +12,8 @@ Features
 	* Supports a picker
 
 
-https://github.com/WindowsNT/ColorPicker/rgb.jpg?raw=true
-https://github.com/WindowsNT/ColorPicker/hsl.jpg?raw=true
+![RGB](https://github.com/WindowsNT/ColorPicker/raw/master/rgb.jpg?raw=true)
+![HSL](https://github.com/WindowsNT/ColorPicker/raw/master/hsl.jpg?raw=true)
 
 
 
