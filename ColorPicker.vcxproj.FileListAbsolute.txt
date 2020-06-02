@@ -1,2 +1,0 @@
-F:\TP2\ColorPicker\ColorPicker.exe
-F:\TP2\ColorPicker\ColorPicker.pdb
