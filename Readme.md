@@ -2,6 +2,21 @@
 
 ```C++
 
+Features
+
+	* One header file
+	* Direct2D drawing
+	* Alpha
+	* HSL and RGB support
+	* Can use the system dialog
+	* Supports a picker
+
+
+https://github.com/WindowsNT/ColorPicker/rgb.jpg?raw=true
+https://github.com/WindowsNT/ColorPicker/hsl.jpg?raw=true
+
+
+
 struct COLORPICKOPT
 {
 	bool Alpha = 1;
