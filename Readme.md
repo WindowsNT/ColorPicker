@@ -12,10 +12,6 @@ Features
 	* Supports a picker
 
 
-![RGB](https://github.com/WindowsNT/ColorPicker/raw/master/rgb.jpg?raw=true)
-![HSL](https://github.com/WindowsNT/ColorPicker/raw/master/hsl.jpg?raw=true)
-
-
 
 struct COLORPICKOPT
 {
@@ -30,6 +26,12 @@ struct COLORPICKOPT
 };
 
 ```
+
+
+![RGB](https://github.com/WindowsNT/ColorPicker/raw/master/rgb.jpg?raw=true)
+![HSL](https://github.com/WindowsNT/ColorPicker/raw/master/hsl.jpg?raw=true)
+
+
 
 To use, simply:
 
