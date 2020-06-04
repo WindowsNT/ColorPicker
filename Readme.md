@@ -12,19 +12,6 @@ Features
 	* Supports a picker
 
 
-
-struct COLORPICKOPT
-{
-	bool Alpha = 1;
-	int Mode = 1;
-	float rsl = 0.1f;
-	bool Dlg = 1;
-	bool LUpdate = 0;
-	bool AlsoUseSystem = 1;
-	bool UsePicker = 1;
-	float Resolution = 0.1f;
-};
-
 ```
 
 
@@ -44,5 +31,24 @@ To use, simply:
 	{
 		// Color is set
 	}
+
+```
+
+Optionally you can configure parameters by passing this structure:
+
+```C++
+
+
+
+struct COLORPICKOPT
+{
+	bool Alpha = 1;
+	int Mode = 1;
+	bool Dlg = 1;
+	bool LUpdate = 0;
+	bool AlsoUseSystem = 1;
+	bool UsePicker = 1;
+	float Resolution = 0.1f;
+};
 
 ```

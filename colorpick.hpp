@@ -4,7 +4,6 @@ struct COLORPICKOPT
 {
 	bool Alpha = 1;
 	int Mode = 1;
-	float rsl = 0.1f;
 	bool Dlg = 1;
 	bool LUpdate = 0;
 	bool AlsoUseSystem = 1;
