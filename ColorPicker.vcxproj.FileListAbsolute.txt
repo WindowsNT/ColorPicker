@@ -1,0 +1,2 @@
+F:\tp2\ColorPicker\ColorPicker.exe
+F:\tp2\ColorPicker\ColorPicker.pdb

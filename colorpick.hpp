@@ -15,6 +15,7 @@ class COLORPICK
 {
 public:
 
+	static float ScaleDPI;
 	HWND hH;
 	CComPtr<IDWriteFactory> WriteFactory;
 	CComPtr<ID2D1HwndRenderTarget> d;
@@ -269,6 +270,9 @@ public:
 	{
 		if (Capturing)
 			ReleaseCapture();
+
+
+		FirstScreenMoving = 0;		
 		Capturing = 0;
 		AdjustingAlpha = 0;
 		AdjustingL = 0;
@@ -356,7 +360,6 @@ public:
 		float x = 0, y = 0;
 		x = (FLOAT)LOWORD(ll);
 		y = (FLOAT)HIWORD(ll);
-
 
 		POINT pt;
 		GetCursorPos(&pt);
@@ -689,6 +692,10 @@ public:
 				return 1;
 			}
 		}
+
+		FirstScreenMoving = 1;
+		GetCursorPos(&ScreenDown);
+
 		return 0;
 	}
 
@@ -701,20 +708,44 @@ public:
 	}
 
 	int nnX = -1, nnY = -1;
+	POINT ScreenDown = {};
+	int FirstScreenMoving = 0;
 	void MouseMove(WPARAM ww, LPARAM ll)
 	{
 		bool LeftClick = ((GetAsyncKeyState(VK_LBUTTON) & 0x8000) != 0);
+
+
+
+		if (FirstScreenMoving && LeftClick)
+		{
+			POINT ScreenDown2 = {};
+			GetCursorPos(&ScreenDown2);
+
+
+			RECT rc;
+			GetWindowRect(hH, &rc);
+
+			SetWindowPos(hH, 0, rc.left + (ScreenDown2.x - ScreenDown.x), rc.top + (ScreenDown2.y - ScreenDown.y), 0, 0, SWP_NOSIZE | SWP_SHOWWINDOW);
+			ScreenDown = ScreenDown2;
+		}
+
 		if (LeftClick && Capturing)
 		{
 			POINT pt = { 0 };
 			GetCursorPos(&pt);
 
+
+			bool Shift = ((GetAsyncKeyState(VK_SHIFT) & 0x8000) != 0);
 			//  Get the device context of the desktop and from it get the color 
 			//  of the pixel at the current mouse pointer position
 
 			SetCursor(LoadCursor(0, IDC_CROSS));
 			auto hDC  = ::GetDCEx(NULL, NULL, 0);
-			DWORD cr = GetPixel(hDC, pt.x, pt.y);
+			float fd = ScaleDPI/96.0f;
+			DWORD cr = GetPixel(hDC, (int)(pt.x*fd), (int)(pt.y*fd));
+
+			if (Shift)
+				DebugBreak();
 			ReleaseDC(0,hDC);
 			C = FromRGB(cr,false);
 			A = 1.0f;
@@ -807,7 +838,7 @@ public:
 		auto br = GetD2SolidBrush(p, { 1.0f,0,0,1.0f });
 
 
-//		p->FillRectangle(ColorWheelRect, br);
+
 
 		D2D1_POINT_2F Center = { ColorWheelRect.left + (ColorWheelRect.right - ColorWheelRect.left) / 2.0f,
 		ColorWheelRect.top + (ColorWheelRect.bottom - ColorWheelRect.top) / 2.0f };
@@ -1620,6 +1651,7 @@ public:
 			p->DrawTextW(t, (UINT32)(wcslen(t)), Text, AlphaRect, white);
 			AlphaRect.left -= 50;
 		}
+		p->DrawRectangle(rc, white, 5);
 	}
 	D2D1_RECT_F RedRect = {};
 	D2D1_RECT_F GreenRect = {};
@@ -1754,6 +1786,10 @@ public:
 					DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED, __uuidof(IDWriteFactory), (IUnknown**)&WriteFactory);
 				if (!fa)
 					D2D1CreateFactory(D2D1_FACTORY_TYPE::D2D1_FACTORY_TYPE_MULTI_THREADED, &fa);
+				float dpiX = 0, dpiY = 0;
+#pragma warning(disable: 4996)
+				fa->GetDesktopDpi(&dpiX, &dpiY);
+#pragma warning(default: 4996)
 				if (!d)
 				{
 					//				D2D1_RENDER_TARGET_PROPERTIES p;
@@ -1763,9 +1799,13 @@ public:
 					hp.pixelSize.height = rc.bottom;
 					d.Release();
 
-					fa->CreateHwndRenderTarget(D2D1::RenderTargetProperties(), D2D1::HwndRenderTargetProperties(hh, D2D1::SizeU(rc.right - rc.left, rc.bottom - rc.top)), &d);
+					auto props = D2D1::RenderTargetProperties();
+					props.dpiX = 96;
+					props.dpiY = 96;
+					fa->CreateHwndRenderTarget(props, D2D1::HwndRenderTargetProperties(hh, D2D1::SizeU(rc.right - rc.left, rc.bottom - rc.top)), &d);
 				}
 				d->BeginDraw();
+//				d->SetTransform(D2D1::Matrix3x2F::Scale(96.0f/dpiX, 96.0f/dpiY));
 				Paint(fa, WriteFactory, d, rc);
 				d->EndDraw();
 				EndPaint(hh, &ps);
@@ -1844,7 +1884,11 @@ public:
 		else
 			A = C.a;
 
-
+		if (C.b == 0 && C.g == 0 && C.r == 0 && C.a == 0)
+		{
+			C.a = 1.0f;
+			A = 1.0f;
+		}
 		if (opts.Dlg)
 		{
 				const char* res = "\x01\x00\xFF\xFF\x00\x00\x00\x00\x00\x00\x00\x00\x48\x08\x08\x80\x00\x00\x00\x00\x00\x00\x21\x02\xFA\x00\x00\x00\x00\x00\x00\x00\x08\x00\x90\x01\x00\x01\x4D\x00\x53\x00\x20\x00\x53\x00\x68\x00\x65\x00\x6C\x00\x6C\x00\x20\x00\x44\x00\x6C\x00\x67\x00\x00\x00";

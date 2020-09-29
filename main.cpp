@@ -22,10 +22,11 @@ processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
 
 
 #include "colorpick.hpp"
+float COLORPICK::ScaleDPI = 96.0f;
 
 COLORPICK prx;
 int __stdcall WinMain(HINSTANCE h, HINSTANCE, LPSTR, int)
 {
-	D2D1_COLOR_F c1 = {1.0f,0,0,1.0f};
+	D2D1_COLOR_F c1 = {};// = { 1.0f,0,0,1.0f };
 	prx.Show(0, c1);
 }
